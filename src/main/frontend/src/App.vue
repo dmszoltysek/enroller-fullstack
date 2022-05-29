@@ -11,7 +11,11 @@
       <meetings-page :username="authenticatedUsername"></meetings-page>
     </div>
     <div v-else>
-      <login-form @login="login($event)"></login-form>
+      <button @click="registering = false" :class="!registering ? '' : 'button-clear'"> Zaloguj się</button>
+      <button @click="registering = true" :class="registering ? '' : 'button-clear'">Zarejestruj się</button>
+      <div :class="isErrorMessage ? 'red' : 'green'" v-if="message">{{message}}</div>
+      <login-form @login="login($event)" v-if="registering === false"></login-form>
+      <login-form @login="register($event)" button-label="Zarejestruj się" v-else></login-form>
     </div>
   </div>
 </template>
@@ -25,12 +29,28 @@
         components: {LoginForm, MeetingsPage},
         data() {
             return {
-                authenticatedUsername: ""
+              registering: false,
+              isErrorMessage: false,
+              message: '',
+              authenticatedUsername: ""
             };
         },
         methods: {
             login(user) {
                 this.authenticatedUsername = user.login;
+            },
+            register(user) {
+              this.$http.post('participants', user)
+                .then(response => {
+                  // udało się
+                  this.message='Udało się';
+                  this.isErrorMessage = false;
+                })
+                .catch(response => {
+                  // nie udało sie
+                  this.message='Nie udało się';
+                  this.isErrorMessage = true;
+                });
             },
             logout() {
                 this.authenticatedUsername = '';
@@ -47,6 +67,15 @@
 
   .logo {
     vertical-align: middle;
+  }
+
+  .red{
+    color: white;
+    background-color: red;
+  }
+  .green{
+    color: white;
+    background-color: green;
   }
 </style>
 
