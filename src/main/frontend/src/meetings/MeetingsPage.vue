@@ -70,7 +70,7 @@
             },
             addMeetingParticipant(meeting) {
                 meeting.participants.push(this.username);
-                this.$http.post('meetings/' + meeting.id + '/participants/', {login: this.username})
+                this.$http.post('meetings/' + meeting.id + '/participants', {login: this.username})
               .then(() => {
                 console.log('Dodano użytkownika do spotkania.');
                 this.fetchMeetings();
