@@ -27,7 +27,7 @@
             .then((response) => {
               console.log('Zaimportowano listę spotkań.');
               this.meetings = response.data;
-              console.log(this.meetings);
+              console.log(JSON.stringify(this.meetings));
             })
             .catch(response => console.log('Nie udało się pobrać spotkań: ' + response.status));
       },
@@ -50,7 +50,7 @@
         },
         methods: {
           fetchMeetings(){
-            this.$http.get('meetings')
+            this.http.get('meetings')
                 .then(response => {
                   this.meetings = response.body;
                 })
