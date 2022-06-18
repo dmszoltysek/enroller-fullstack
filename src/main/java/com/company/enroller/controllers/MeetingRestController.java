@@ -65,7 +65,7 @@ public class MeetingRestController {
         return new ResponseEntity<Meeting>(meeting, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "", method = RequestMethod.PUT)
+    @RequestMapping(value = "{id}/participants", method = RequestMethod.PUT)
     public ResponseEntity<?> addParticipant(@RequestParam long meetingId, @RequestParam String login) {
         Meeting foundMeeting = meetingService.findById (meetingId);
         Participant foundParticipant = participantService.findByLogin (login);
@@ -75,7 +75,7 @@ public class MeetingRestController {
         meetingService.addParticipant (foundMeeting, foundParticipant);
         return new ResponseEntity<Collection<Participant>> (foundMeeting.getParticipants (), HttpStatus.OK);
     }
-    @RequestMapping(value = "", method = RequestMethod.DELETE)
+    @RequestMapping(value = "{id}/participants/{login}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteParticipant(@RequestParam long meetingId, @RequestParam String login) {
         Meeting foundMeeting = meetingService.findById (meetingId);
         Participant foundParticipant = participantService.findByLogin(login);
