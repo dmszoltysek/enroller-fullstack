@@ -27,7 +27,6 @@
             .then((response) => {
               console.log('Zaimportowano listę spotkań.');
               this.meetings = response.data;
-              console.log(JSON.stringify(this.meetings));
             })
             .catch(response => console.log('Nie udało się pobrać spotkań: ' + response.status));
       },
@@ -35,22 +34,22 @@
         props: ['username'],
         data() {
             return {
-                meetings: []
+                meetings_list: []
             };
         },
         computed: {
           meetings: {
             get() {
-            return this.meetings;
+            return this.meetings_list;
             },
             set(meetings) {
-              this.meetings = meetings;
+              this.meetings_list = meetings;
             }
           }
         },
         methods: {
           fetchMeetings(){
-            this.http.get('meetings')
+            this.$http.get('meetings')
                 .then(response => {
                   this.meetings = response.body;
                 })
@@ -70,31 +69,36 @@
             },
             addMeetingParticipant(meeting) {
                 meeting.participants.push(this.username);
-                this.$http.post('meetings/' + meeting.id + '/participants', {login: this.username})
-              .then(() => {
+                this.$http.post('meetings/' + meeting.id + '/participants', {login:this.username})
+              .then(response => {
                 console.log('Dodano użytkownika do spotkania.');
                 this.fetchMeetings();
               })
-              .catch(response => console.log('Nie udało się dodać użytkownika do spotkania: ' + response.status))
+              .catch(response => {
+                console.log('Nie udało się dodać użytkownika do spotkania: ' + response.status);
+              });
             },
             removeMeetingParticipant(meeting) {
                 meeting.participants.splice(meeting.participants.indexOf(this.username), 1);
                 this.$http.delete('meetings/' + meeting.id + '/participants/' + this.username)
-                    .then(() => {
+                    .then(response => {
                       console.log('Usunięto użytkownika ze spotkania.');
                       this.fetchMeetings();
                     })
-                    .catch(response => console.log('Nie udało się usunąć użytkownika ze spotkania: ' + response.status))
+                    .catch(response => {
+                      console.log('Nie udało się usunąć użytkownika ze spotkania: ' + response.status);
+                    });
             },
             deleteMeeting(meeting) {
                 this.meetings.splice(this.meetings.indexOf(meeting), 1);
                 this.$http.delete('meetings/' + meeting.id)
-                    .then(() => {
+                    .then(response => {
                       console.log('Usunięto spotkanie.');
-                      this.fetchMeetings();
                     })
-                    .catch(response => console.log('Nie udało usunąć spotkania: ' + response.status))
-            }
+                    .catch(response => {
+                        console.log('Nie udało usunąć spotkania: ' + response.status);
+            });
+          }
         }
     }
 </script>

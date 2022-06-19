@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/meetings")
@@ -65,9 +66,10 @@ public class MeetingRestController {
         return new ResponseEntity<Meeting>(meeting, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "{id}/participants", method = RequestMethod.PUT)
-    public ResponseEntity<?> addParticipant(@RequestParam long meetingId, @RequestParam String login) {
+    @RequestMapping(value = "{id}/participants", method = RequestMethod.POST)
+    public ResponseEntity<?> addParticipant(@PathVariable("id") long meetingId, @RequestBody Map<String, String> username) {
         Meeting foundMeeting = meetingService.findById (meetingId);
+        String login = username.get("login");
         Participant foundParticipant = participantService.findByLogin (login);
         if (foundMeeting == null || foundParticipant == null) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
@@ -76,7 +78,7 @@ public class MeetingRestController {
         return new ResponseEntity<Collection<Participant>> (foundMeeting.getParticipants (), HttpStatus.OK);
     }
     @RequestMapping(value = "{id}/participants/{login}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteParticipant(@RequestParam long meetingId, @RequestParam String login) {
+    public ResponseEntity<?> deleteParticipant(@PathVariable("id") long meetingId, @PathVariable("login") String login) {
         Meeting foundMeeting = meetingService.findById (meetingId);
         Participant foundParticipant = participantService.findByLogin(login);
         if (foundMeeting == null || foundParticipant == null) {
